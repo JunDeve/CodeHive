@@ -43,9 +43,13 @@ function App() {
         const daytrendData = response.data;
         console.log("백엔드에서 받은 일일 트렌드 데이터:", daytrendData);
 
-        // 여기를 고쳐야합니다. 일일 트렌드 데이터 경로는 default 안에 있는 trendingSearchesDays 배열 안에 있는 trendingSearches 배열안에 있는 title 과 formattedTraffic 을 가져오면 됩니다.
-        // const DayTrendingStories  = daytrendData.default.trendingSearchesDays.trendingSearches.slice(0,5);
-        // setDayTrends(DayTrendingStories);
+        // 일일 데이터 불러오기
+        const DayTrendingStories  = daytrendData.default.trendingSearchesDays[0];
+        
+        // 인기 급상승 검색어 5개 불러오기
+        const DayTrendingStories_2 = DayTrendingStories.trendingSearches.slice(0, 5);
+        
+        setDayTrends(DayTrendingStories_2);
       })
       .catch((error) => {
         console.error("요청 중 오류 발생:", error);
@@ -70,7 +74,7 @@ function App() {
         <p>일별 인기 급상승 검색어</p>
         <ul>
           {daytrends.map((daystory, index) => (
-            <li key={index}>{daystory.title}</li>
+            <li key={index}>{daystory.title.query}, {daystory.formattedTraffic}</li>
           ))}
         </ul>
       </header>
