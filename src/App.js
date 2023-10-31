@@ -71,7 +71,7 @@ function App() {
         <input
           type="button"
           value="apple"
-          onClick={() => handleSearch('apple')} // 버튼 클릭 키워드 설정
+          onClick={() => handleSearch('button1')} // 버튼 클릭 키워드 설정
         />
         <ul>
           {searchResults.map((result, index) => (
@@ -93,6 +93,10 @@ function App() {
             <li key={index}>{daystory.title.query}, {daystory.formattedTraffic}</li>
           ))}
         </ul>
+        <p>관련 검색어</p>
+            
+        <p>관련 주제</p>
+
       </header>
     </div>
   );

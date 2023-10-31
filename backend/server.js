@@ -51,6 +51,41 @@ app.get("/daytrending", (req, res) => {
   });
 });
 
+// 관련 검색어
+app.get("/relatedQueries", (req, res) => {
+  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+  googleTrends.apiKey = apiKey;
+
+  googleTrends.relatedQueries({
+    keyword: 'Westminster Dog Show'
+  }, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("관련 검색어 : ", results);
+      res.json(JSON.parse(results));
+    }
+  });
+});
+
+// 관련 주제
+app.get("/relatedTopics", (req, res) => {
+  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+  googleTrends.apiKey = apiKey;
+
+  googleTrends.relatedTopics({keyword: 'Chipotle', 
+  startTime: new Date('2015-01-01'), 
+  endTime: new Date('2017-02-10')
+}, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("관련 주제 : ", results);
+      res.json(JSON.parse(results));
+    }
+  });
+});
+
 // 검색 기능
 app.get("/search", async (req, res) => {
   const KEY = '400cee3fddff018623f67a238776b71999f8345693a1353b190ced2c7700deb2';
