@@ -38,8 +38,13 @@ app.get("/daytrending", (req, res) => {
   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
   googleTrends.apiKey = apiKey;
   
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
+
   googleTrends.dailyTrends({
-    trendDate: new Date('2023-10-30'),
+    trendDate: formattedDate,
     geo: 'KR',
   }, function (err, results) {
     if (err) {
@@ -51,6 +56,49 @@ app.get("/daytrending", (req, res) => {
   });
 });
 
+// 관련 검색어
+app.get("/relatedQueries", (req, res) => {
+  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+  googleTrends.apiKey = apiKey;
+
+  const keyword = req.query.keyword;
+
+  googleTrends.relatedQueries({
+    keyword: keyword
+  }, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("관련 검색어 : ", results);
+      res.json(JSON.parse(results));
+    }
+  });
+});
+
+// 관련 주제
+app.get("/relatedTopics", (req, res) => {
+  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+  googleTrends.apiKey = apiKey;
+
+  const keyword = req.query.keyword;
+
+  const endTime = new Date();
+  endTime.setSeconds(endTime.getSeconds() - 1);
+
+  googleTrends.relatedTopics({keyword: keyword, 
+  startTime: new Date('2015-01-01'), 
+  endTime: endTime
+}, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("관련 주제 : ", results);
+      res.json(JSON.parse(results));
+    }
+  });
+});
+
+// 검색 기능
 app.get("/search", async (req, res) => {
   const KEY = '400cee3fddff018623f67a238776b71999f8345693a1353b190ced2c7700deb2';
   const keyword = req.query.q;

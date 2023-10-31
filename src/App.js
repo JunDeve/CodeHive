@@ -5,64 +5,106 @@ import React, { useEffect, useState } from 'react';
 function App() {
   const [trends, setTrends] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [daytrends, setDayTrends]=  useState([]);
-  const keyword = 'abc';
+  const [daytrends, setDayTrends] = useState([]);
+  const [relatedQueries, setRelatedQueries] = useState([]);
+  const [relatedTopics_, setRelatedTopics_] = useState([]);
+  const [keyword, setKeyword] = useState('');
 
-  // 구글 서치 데이터
   useEffect(() => {
-    axios.get(`http://localhost:5000/search?q=${keyword}`)
-      .then(response => {
+    // 구글 서치 데이터
+    const fetchSearchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/search?q=${keyword}`);
         const searchData = response.data;
         console.log("백엔드에서 받은 검색 결과:", searchData);
         const firstTenResults = searchData.organic_results.slice(0, 5);
         setSearchResults(firstTenResults);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error("요청 중 오류 발생:", error);
-      });
-  }, [keyword]);
+      }
+    };
 
-  // 구글 트랜드 데이터
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/trending")
-      .then(response => {
+    // 구글 트렌드 데이터
+    const fetchTrendData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/trending");
         const trendData = response.data;
         console.log("백엔드에서 받은 트렌드 데이터:", trendData);
 
         const topTrendingStories = trendData.storySummaries.trendingStories.slice(0, 5);
         setTrends(topTrendingStories);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("요청 중 오류 발생:", error);
-      });
+      }
+    };
 
-      axios
-      .get("http://localhost:5000/daytrending")
-      .then(response => {
+    // 일일 트렌드 데이터
+    const fetchDayTrendData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/daytrending");
         const daytrendData = response.data;
         console.log("백엔드에서 받은 일일 트렌드 데이터:", daytrendData);
 
-        // 일일 데이터 불러오기
         const DayTrendingStories  = daytrendData.default.trendingSearchesDays[0];
-        
-        // 인기 급상승 검색어 5개 불러오기
         const DayTrendingStories_2 = DayTrendingStories.trendingSearches.slice(0, 5);
         
         setDayTrends(DayTrendingStories_2);
+      } catch (error) {
+        console.error("요청 중 오류 발생:", error);
+      }
+    };
+
+    if (keyword !== '') {
+      fetchSearchData();
+      fetchTrendData();
+      fetchDayTrendData();
+    }
+  }, [keyword]);
+
+  // 버튼을 클릭했을 때 키워드 설정, 서버에 키워드 전달
+  const handleSearch = (newKeyword) => {
+    setKeyword(newKeyword);
+
+    axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`)
+    .then((response) => {
+      const relatedQueries = response.data;
+      console.log("관련 검색어:", relatedQueries);
+      setRelatedQueries(relatedQueries.default.rankedList[0].rankedKeyword.slice(0, 5));
+    })
+    .catch((error) => {
+      console.error("요청 중 오류 발생:", error);
+    });
+
+    axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`)
+      .then((response) => {
+        const relatedTopics = response.data;
+        console.log("관련 주제:", relatedTopics);
+        const relatedTopics_1 = relatedTopics.default.rankedList[0].rankedKeyword;
+        const relatedTopics_2 = relatedTopics_1.slice(0, 5);
+        console.log(relatedTopics_2);
+        setRelatedTopics_(relatedTopics_2);
+        // console.log(relatedTopics_);
       })
       .catch((error) => {
         console.error("요청 중 오류 발생:", error);
       });
-  }, []);
+  };
 
   return (
     <div className="App">
       <header className="App-header">
         <p>서치확인</p>
+        <input
+          type="button"
+          value="banana"
+          onClick={() => handleSearch('banana')}
+        />
         <ul>
           {searchResults.map((result, index) => (
-            <ul key={index}>{result.title} <hr/> {result.link}</ul>
+            <li key={index}>
+              <div>{result.title}</div>
+              <div>{result.link}</div>
+            </li>
           ))}
         </ul>
         <p>실시간 인기 검색어</p>
@@ -75,6 +117,18 @@ function App() {
         <ul>
           {daytrends.map((daystory, index) => (
             <li key={index}>{daystory.title.query}, {daystory.formattedTraffic}</li>
+          ))}
+        </ul>
+        <p>관련 검색어</p>
+        <ul>
+          {relatedQueries.map((query, index) => (
+            <li key={index}>{query.query}</li>
+          ))}
+        </ul>
+        <p>관련 주제</p>
+        <ul>
+          {relatedTopics_.map((topic, index) => (
+            <li key={index}>{topic.topic.title}</li>
           ))}
         </ul>
       </header>
