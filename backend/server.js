@@ -37,7 +37,7 @@ app.get("/trending", (req, res) => {
 app.get("/daytrending", (req, res) => {
   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
   googleTrends.apiKey = apiKey;
-
+  
   const today = new Date();
   const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1)
     .toString()
@@ -64,9 +64,7 @@ app.get("/relatedQueries", (req, res) => {
   const keyword = req.query.keyword;
 
   googleTrends.relatedQueries({
-    keyword: keyword,
-    geo: 'KR',
-    hl: 'KR',
+    keyword: keyword
   }, function (err, results) {
     if (err) {
       console.log(err);
@@ -87,10 +85,10 @@ app.get("/relatedTopics", (req, res) => {
   const endTime = new Date();
   endTime.setSeconds(endTime.getSeconds() - 1);
 
-  googleTrends.relatedTopics({
-    keyword: keyword,
-    endTime: endTime,
-  }, function (err, results) {
+  googleTrends.relatedTopics({keyword: keyword, 
+  startTime: new Date('2015-01-01'), 
+  endTime: endTime
+}, function (err, results) {
     if (err) {
       console.log(err);
     } else {

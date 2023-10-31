@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     // 구글 서치 데이터
-    const fetchSearchData = async (keyword) => {
+    const fetchSearchData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/search?q=${keyword}`);
         const searchData = response.data;
@@ -45,53 +45,49 @@ function App() {
         const daytrendData = response.data;
         console.log("백엔드에서 받은 일일 트렌드 데이터:", daytrendData);
 
-        const DayTrendingStories = daytrendData.default.trendingSearchesDays[0];
+        const DayTrendingStories  = daytrendData.default.trendingSearchesDays[0];
         const DayTrendingStories_2 = DayTrendingStories.trendingSearches.slice(0, 5);
-
+        
         setDayTrends(DayTrendingStories_2);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
       }
     };
 
-    // 관련 검색어
-    const fetchRelatedQueries = async (newKeyword) => {
-      try {
-        const response = await axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`);
-        const relatedQueriesData = response.data;
-        console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
-        setRelatedQueries(relatedQueriesData.default.rankedList[0].rankedKeyword.slice(0, 5));
-      } catch (error) {
-        console.error("요청 중 오류 발생:", error);
-      }
-    };
-
-    // 관련 주제
-    const fetchRelatedTopics = async (newKeyword) => {
-      try {
-        const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
-        const relatedTopicsData = response.data;
-        console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
-        const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword;
-        const relatedTopics_2 = relatedTopics_1.slice(0, 5);
-        setRelatedTopics_(relatedTopics_2);
-      } catch (error) {
-        console.error("요청 중 오류 발생:", error);
-      }
-    };
-
     if (keyword !== '') {
-      fetchSearchData(keyword)
-        .then(() => fetchTrendData())
-        .then(() => fetchDayTrendData())
-        .then(() => fetchRelatedQueries(keyword))
-        .then(() => fetchRelatedTopics(keyword));
+      fetchSearchData();
+      fetchTrendData();
+      fetchDayTrendData();
     }
   }, [keyword]);
 
-  // 버튼을 클릭했을 때
+  // 버튼을 클릭했을 때 키워드 설정, 서버에 키워드 전달
   const handleSearch = (newKeyword) => {
     setKeyword(newKeyword);
+
+    axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`)
+    .then((response) => {
+      const relatedQueries = response.data;
+      console.log("관련 검색어:", relatedQueries);
+      setRelatedQueries(relatedQueries.default.rankedList[0].rankedKeyword.slice(0, 5));
+    })
+    .catch((error) => {
+      console.error("요청 중 오류 발생:", error);
+    });
+
+    axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`)
+      .then((response) => {
+        const relatedTopics = response.data;
+        console.log("관련 주제:", relatedTopics);
+        const relatedTopics_1 = relatedTopics.default.rankedList[0].rankedKeyword;
+        const relatedTopics_2 = relatedTopics_1.slice(0, 5);
+        console.log(relatedTopics_2);
+        setRelatedTopics_(relatedTopics_2);
+        // console.log(relatedTopics_);
+      })
+      .catch((error) => {
+        console.error("요청 중 오류 발생:", error);
+      });
   };
 
   return (
@@ -100,8 +96,8 @@ function App() {
         <p>서치확인</p>
         <input
           type="button"
-          value="자전거"
-          onClick={() => handleSearch('자전거')}
+          value="banana"
+          onClick={() => handleSearch('banana')}
         />
         <ul>
           {searchResults.map((result, index) => (
