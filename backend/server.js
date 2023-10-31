@@ -51,6 +51,7 @@ app.get("/daytrending", (req, res) => {
   });
 });
 
+// 검색 기능
 app.get("/search", async (req, res) => {
   const KEY = '400cee3fddff018623f67a238776b71999f8345693a1353b190ced2c7700deb2';
   const keyword = req.query.q;
