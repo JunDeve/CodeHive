@@ -17,7 +17,7 @@ function App() {
         const response = await axios.get(`http://localhost:5000/search?q=${keyword}`);
         const searchData = response.data;
         console.log("백엔드에서 받은 검색 결과:", searchData);
-        const firstTenResults = searchData.organic_results.slice(0, 5);
+        const firstTenResults = searchData.slice(0, 5);
         setSearchResults(firstTenResults);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
@@ -107,7 +107,7 @@ function App() {
           {searchResults.map((result, index) => (
             <li key={index}>
               <div>{result.title}</div>
-              <div>{result.link}</div>
+              <div>{result.url}</div>
             </li>
           ))}
         </ul>
