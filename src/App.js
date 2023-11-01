@@ -72,9 +72,9 @@ function App() {
         const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
         const relatedTopicsData = response.data;
         console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
-        const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword;
-        const relatedTopics_2 = relatedTopics_1.slice(0, 5);
-        setRelatedTopics_(relatedTopics_2);
+        const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword.slice(0, 5);
+
+        setRelatedTopics_(relatedTopics_1);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
       }

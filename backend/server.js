@@ -19,8 +19,9 @@ app.get("/trending", (req, res) => {
 
   googleTrends.realTimeTrends(
     {
-      geo: "US",
-      category: "all",
+      geo: 'US',
+      hl: 'ko',
+      category: 'all',
     },
     function (err, results) {
       if (err) {
@@ -90,7 +91,9 @@ app.get("/relatedTopics", (req, res) => {
 
   googleTrends.relatedTopics({
     keyword: keyword,
+    startTime: new Date('2010-01-01'),
     endTime: endTime,
+    hl: 'ko',
   }, function (err, results) {
     if (err) {
       console.log(err);
@@ -117,7 +120,6 @@ app.get("/search", async (req, res) => {
       num: 10,
       start: 0,
       safe: "active",
-      // Add any other parameters you need
     },
   };
   
@@ -126,7 +128,7 @@ app.get("/search", async (req, res) => {
     
     res.json(searchResults);
   } catch (error) {
-    console.error("An error occurred during the request:", error);
+    console.error("검색 요청 중 에러 : ", error);
   }
 });
 
