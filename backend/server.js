@@ -92,6 +92,7 @@ app.get("/relatedTopics", (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      
       console.log("관련 주제 : ", results);
       res.json(JSON.parse(results));
     }
