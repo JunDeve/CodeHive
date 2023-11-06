@@ -1,8 +1,15 @@
-import "./App.css";
+import React,{useState,useEffect} from 'react';
+import Main from '../src/MainPage/Main';
+import HomePage from '../src/ProjectHome/Home';
+import Search from '../src/Search/Main/Searchmain';
+import TextPage from './TextPage/TextPage';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from "axios";
-import React, { useEffect, useState } from 'react';
 
 function App() {
+  const itemList = ["운동", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7"];
+  const sevaitemList = ["운동", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8"];//searchText 의 값을 받아와야댐
+
   const [trends, setTrends] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [daytrends, setDayTrends] = useState([]);
@@ -94,8 +101,18 @@ function App() {
     setKeyword(newKeyword);
   };
 
+
   return (
-    <div className="App">
+    <> <Router>
+    <Routes>
+      <Route path="/" element={<Main />} />
+      <Route path="/HomePage" element={<HomePage />} />
+      <Route path="/Search" element={<Search items={itemList} sevaitemList={sevaitemList} />} />
+      <Route path="/TextPage" element={<TextPage/>}/>
+    </Routes>
+  </Router>
+  
+  <div className="App">
       <header className="App-header">
         <p>서치확인</p>
         <input
@@ -137,6 +154,13 @@ function App() {
         </ul>
       </header>
     </div>
+  
+  
+  </>
+ 
+
+
+
   );
 }
 

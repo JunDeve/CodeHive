@@ -1,0 +1,35 @@
+*{
+    margin:0;
+    padding:0;
+}
+.Main{
+    
+    height:100vh;
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    
+}
+.HomeButton{
+  
+  height:40vh;
+  width:30%;
+  display:flex;
+  justify-content: center;
+  align-items:center;
+}
+
+
+.GraphaButton{
+    
+    height:40vh;
+    width:30%;
+    display:flex;
+    justify-content: center;
+    align-items:center;
+}
+
+.HomeButton > button{
+    height:10vh;
+    width:20%;
+}
