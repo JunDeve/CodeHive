@@ -5,6 +5,7 @@ const axios = require("axios");
 const googleTrends = require("google-trends-api");
 const port = process.env.PORT || 5000;
 const serp = require("serp");
+const wiki = require('wikipedia');
 
 app.use(cors());
 
@@ -126,6 +127,21 @@ app.get("/search", async (req, res) => {
   try {
     const searchResults = await serp.search(options);
     
+    res.json(searchResults);
+  } catch (error) {
+    console.error("검색 요청 중 에러 : ", error);
+  }
+});
+
+// 위키 검색 기능
+app.get("/wikisearch", async (req, res) => {
+  const keyword = req.query.q;
+  
+  try {
+    const searchResults = await wiki.search(keyword);
+		console.log(searchResults);
+		const newUrl = await wiki.setLang('fr');
+
     res.json(searchResults);
   } catch (error) {
     console.error("검색 요청 중 에러 : ", error);

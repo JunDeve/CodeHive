@@ -15,6 +15,7 @@ function App() {
   const [daytrends, setDayTrends] = useState([]);
   const [relatedQueries, setRelatedQueries] = useState([]);
   const [relatedTopics_, setRelatedTopics_] = useState([]);
+  const [wikisearchResults, setwikisearchResults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
@@ -87,11 +88,25 @@ function App() {
       }
     };
 
+    // 위키 서치 데이터
+    const fetchwikiSearchData = async (keyword) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
+        const wikisearchData = response.data;
+        console.log("백엔드에서 받은 위키 검색 결과:", wikisearchData);
+        const wikifirstTenResults = wikisearchData.slice(0, 5);
+        setwikisearchResults(wikifirstTenResults);
+      } catch (error) {
+        console.error("요청 중 오류 발생:", error);
+      }
+    };
+
     if (keyword !== '') {
       fetchSearchData(keyword)
         .then(() => fetchTrendData())
         .then(() => fetchDayTrendData())
         .then(() => fetchRelatedQueries(keyword))
+        .then(() => fetchwikiSearchData(keyword))
         .then(() => fetchRelatedTopics(keyword));
     }
   }, [keyword]);
