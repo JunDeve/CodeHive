@@ -15,7 +15,7 @@ function App() {
   const [daytrends, setDayTrends] = useState([]);
   const [relatedQueries, setRelatedQueries] = useState([]);
   const [relatedTopics_, setRelatedTopics_] = useState([]);
-  const [wikisearchResults, setwikisearchResults] = useState([]);
+  const [wikisearchResults, setWikisearchResults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
@@ -89,15 +89,14 @@ function App() {
     };
 
     // 위키 서치 데이터
-    const fetchwikiSearchData = async (keyword) => {
+    const fetchWikisearchData = async (keyword) => {
       try {
         const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
         const wikisearchData = response.data;
-        console.log("백엔드에서 받은 위키 검색 결과:", wikisearchData);
-        const wikifirstTenResults = wikisearchData.slice(0, 5);
-        setwikisearchResults(wikifirstTenResults);
+        console.log("백엔드에서 받은 위키 서치 데이터:", wikisearchData);
+        setWikisearchResults(wikisearchData); 
       } catch (error) {
-        console.error("요청 중 오류 발생:", error);
+        console.error('요청 중 오류 발생:', error);
       }
     };
 
@@ -105,9 +104,9 @@ function App() {
       fetchSearchData(keyword)
         .then(() => fetchTrendData())
         .then(() => fetchDayTrendData())
-        .then(() => fetchRelatedQueries(keyword))
-        .then(() => fetchwikiSearchData(keyword))
-        .then(() => fetchRelatedTopics(keyword));
+        .then(() => fetchWikisearchData(keyword))
+        // .then(() => fetchRelatedQueries(keyword))
+        // .then(() => fetchRelatedTopics(keyword));
     }
   }, [keyword]);
 
@@ -167,8 +166,18 @@ function App() {
             <li key={index}>{topic.topic.title}</li>
           ))}
         </ul>
-      </header>
-    </div>
+          <p>위키 서치 데이터</p>
+          <ul>
+            <li>제목 : {wikisearchResults.title}</li>
+            <li>요약 : {wikisearchResults.extract}</li>
+            {wikisearchResults && wikisearchResults.originalimage && (
+              <li>
+                이미지: <img src={wikisearchResults.originalimage.source} alt={wikisearchResults.title} style={{ maxWidth: '100%', height: 'auto' }} />
+              </li>
+            )}
+          </ul>
+        </header>
+      </div>
   
   
   </>

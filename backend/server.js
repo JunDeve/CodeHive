@@ -136,13 +136,16 @@ app.get("/search", async (req, res) => {
 // 위키 검색 기능
 app.get("/wikisearch", async (req, res) => {
   const keyword = req.query.q;
-  
   try {
-    const searchResults = await wiki.search(keyword);
-		console.log(searchResults);
-		const newUrl = await wiki.setLang('fr');
+    await wiki.setLang('ko');
 
-    res.json(searchResults);
+    const page = await wiki.page(keyword);
+    console.log("위키 검색 결과", page);
+
+    const summary = await page.summary();
+		console.log("검색 결과 요약 : ", summary);
+
+    res.json(summary);
   } catch (error) {
     console.error("검색 요청 중 에러 : ", error);
   }
