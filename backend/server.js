@@ -154,25 +154,17 @@ app.get("/wikisearch", async (req, res) => {
 
 // 유튜브 검색 기능
 app.get("/youtubeSearch", async (req, res) => {
-  const keyword = req.query.keyword;
-  youtubesearchapi.GetShortVideo({
-    id: "",
-    type: "reel",
-    thumbnail: {
-      url: '',
-      width: 405,
-      height: 720
-    },
-    title: keyword,
-    inlinePlaybackEndpoint: {}
-  }, function (err, results) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("유튜브 검색 : ", results);
-      res.json(JSON.parse(results));
-    }
-  });
+  const keyword = req.query.q;
+  console.log("유튜브 키워드 : ", keyword);
+  youtubesearchapi.GetListByKeyword(keyword, true, 2, [{ type: "video" }])
+    .then((searchResults) => {
+      console.log("유튜브 검색 결과 : ", searchResults);
+      res.json({ results: searchResults });
+    })
+    .catch((error) => {
+      // Handle any errors that may occur during the search
+      res.status(500).json({ error: "An error occurred while fetching search results" });
+    });
 });
 
 app.listen(port, () => {

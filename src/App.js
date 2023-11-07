@@ -112,7 +112,7 @@ function App() {
         const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
         const youtubeSearch = response.data;
         console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
-        setYoutubeSearchRusults(youtubeSearch);
+        // setYoutubeSearchRusults(youtubeSearch);
       } catch (error) {
         console.error('요청 중 오류 발생:', error);
       }
