@@ -16,7 +16,7 @@ function App() {
   // const [relatedQueries, setRelatedQueries] = useState([]);
   // const [relatedTopics_, setRelatedTopics_] = useState([]);
   const [wikisearchResults, setWikisearchResults] = useState([]);
-  const [setYoutubesearchResults, setYoutubeSearchRusults] = useState([]);
+  const [YoutubesearchResults, setYoutubeSearchRusults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
@@ -112,7 +112,7 @@ function App() {
         const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
         const youtubeSearch = response.data;
         console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
-        // setYoutubeSearchRusults(youtubeSearch);
+        setYoutubeSearchRusults(youtubeSearch.results.items);
       } catch (error) {
         console.error('요청 중 오류 발생:', error);
       }
@@ -199,9 +199,18 @@ function App() {
           </ul>
           <p>유튜브 서치 데이터</p>
           <ul>
-            {setYoutubesearchResults.map((youtube, index) => (
-              <li key={index}>{youtube}</li>
-            ))}
+          {YoutubesearchResults.map((youtube, index) => (
+          <li key={index}>
+            <iframe
+              width="560"
+              height="315"
+              src={`https://www.youtube.com/embed/${youtube.id}`}
+              title="YouTube Video"
+              frameBorder="0"
+              allowFullScreen
+            ></iframe>
+          </li>
+        ))}
           </ul>
         </header>
       </div>
