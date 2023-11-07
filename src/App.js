@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Main from '../src/MainPage/Main';
 import HomePage from '../src/ProjectHome/Home';
 import Search from '../src/Search/Main/Searchmain';
@@ -13,9 +13,10 @@ function App() {
   const [trends, setTrends] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [daytrends, setDayTrends] = useState([]);
-  const [relatedQueries, setRelatedQueries] = useState([]);
-  const [relatedTopics_, setRelatedTopics_] = useState([]);
+  // const [relatedQueries, setRelatedQueries] = useState([]);
+  // const [relatedTopics_, setRelatedTopics_] = useState([]);
   const [wikisearchResults, setWikisearchResults] = useState([]);
+  const [setYoutubesearchResults, setYoutubeSearchRusults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
@@ -62,51 +63,70 @@ function App() {
       }
     };
 
-    // 관련 검색어
-    const fetchRelatedQueries = async (newKeyword) => {
-      try {
-        const response = await axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`);
-        const relatedQueriesData = response.data;
-        console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
-        setRelatedQueries(relatedQueriesData.default.rankedList[0].rankedKeyword.slice(0, 5));
-      } catch (error) {
-        console.error("요청 중 오류 발생:", error);
-      }
-    };
+    // // 관련 검색어
+    // const fetchRelatedQueries = async (newKeyword) => {
+    //   try {
+    //     const response = await axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`);
+    //     const relatedQueriesData = response.data;
+    //     console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
+    //     setRelatedQueries(relatedQueriesData.default.rankedList[0].rankedKeyword.slice(0, 5));
+    //   } catch (error) {
+    //     console.error("요청 중 오류 발생:", error);
+    //   }
+    // };
 
-    // 관련 주제
-    const fetchRelatedTopics = async (newKeyword) => {
-      try {
-        const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
-        const relatedTopicsData = response.data;
-        console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
-        const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword.slice(0, 5);
+    // // 관련 주제
+    // const fetchRelatedTopics = async (newKeyword) => {
+    //   try {
+    //     const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
+    //     const relatedTopicsData = response.data;
+    //     console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
+    //     const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword.slice(0, 5);
 
-        setRelatedTopics_(relatedTopics_1);
-      } catch (error) {
-        console.error("요청 중 오류 발생:", error);
-      }
-    };
+    //     setRelatedTopics_(relatedTopics_1);
+    //   } catch (error) {
+    //     console.error("요청 중 오류 발생:", error);
+    //   }
+    // };
 
     // 위키 서치 데이터
     const fetchWikisearchData = async (keyword) => {
       try {
         const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
         const wikisearchData = response.data;
-        console.log("백엔드에서 받은 위키 서치 데이터:", wikisearchData);
-        setWikisearchResults(wikisearchData); 
+        const updatedResults = [...wikisearchResults, {
+          title: wikisearchData.title,
+          extract: wikisearchData.extract,
+        }];
+
+        console.log("백엔드에서 받은 위키 서치 데이터:", updatedResults);
+        setWikisearchResults(updatedResults);
       } catch (error) {
         console.error('요청 중 오류 발생:', error);
       }
     };
 
+    // 유튜브 서치 데이터
+    const fetchYoutubeSearch = async (keyword) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
+        const youtubeSearch = response.data;
+        console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
+        setYoutubeSearchRusults(youtubeSearch);
+      } catch (error) {
+        console.error('요청 중 오류 발생:', error);
+      }
+    }
+
+
     if (keyword !== '') {
       fetchSearchData(keyword)
         .then(() => fetchTrendData())
         .then(() => fetchDayTrendData())
-        .then(() => fetchWikisearchData(keyword))
         // .then(() => fetchRelatedQueries(keyword))
-        // .then(() => fetchRelatedTopics(keyword));
+        // .then(() => fetchRelatedTopics(keyword))
+        .then(() => fetchWikisearchData(keyword))
+        .then(() => fetchYoutubeSearch(keyword));
     }
   }, [keyword]);
 
@@ -118,73 +138,74 @@ function App() {
 
   return (
     <> <Router>
-    <Routes>
-      <Route path="/" element={<Main />} />
-      <Route path="/HomePage" element={<HomePage />} />
-      <Route path="/Search" element={<Search items={itemList} sevaitemList={sevaitemList} />} />
-      <Route path="/TextPage" element={<TextPage/>}/>
-    </Routes>
-  </Router>
-  
-  <div className="App">
-      <header className="App-header">
-        <p>서치확인</p>
-        <input
-          type="button"
-          value="자전거"
-          onClick={() => handleSearch('자전거')}
-        />
-        <ul>
-          {searchResults.map((result, index) => (
-            <li key={index}>
-              <div>{result.title}</div>
-              <div>{result.url}</div>
-            </li>
-          ))}
-        </ul>
-        <p>실시간 인기 검색어</p>
-        <ul>
-          {trends.map((story, index) => (
-            <li key={index}>{story.title}</li>
-          ))}
-        </ul>
-        <p>일별 인기 급상승 검색어</p>
-        <ul>
-          {daytrends.map((daystory, index) => (
-            <li key={index}>{daystory.title.query}, {daystory.formattedTraffic}</li>
-          ))}
-        </ul>
-        <p>관련 검색어</p>
-        <ul>
-          {relatedQueries.map((query, index) => (
-            <li key={index}>{query.query}</li>
-          ))}
-        </ul>
-        <p>관련 주제</p>
-        <ul>
-          {relatedTopics_.map((topic, index) => (
-            <li key={index}>{topic.topic.title}</li>
-          ))}
-        </ul>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/HomePage" element={<HomePage />} />
+        <Route path="/Search" element={<Search items={itemList} sevaitemList={sevaitemList} />} />
+        <Route path="/TextPage" element={<TextPage />} />
+      </Routes>
+    </Router>
+
+      <div className="App">
+        <header className="App-header">
+          <p>서치확인</p>
+          <input
+            type="button"
+            value="자전거"
+            onClick={() => handleSearch('자전거')}
+          />
+          <ul>
+            {searchResults.map((result, index) => (
+              <li key={index}>
+                <div>{result.title}</div>
+                <div>{result.url}</div>
+              </li>
+            ))}
+          </ul>
+          <p>실시간 인기 검색어</p>
+          <ul>
+            {trends.map((story, index) => (
+              <li key={index}>{story.title}</li>
+            ))}
+          </ul>
+          <p>일별 인기 급상승 검색어</p>
+          <ul>
+            {daytrends.map((daystory, index) => (
+              <li key={index}>{daystory.title.query}, {daystory.formattedTraffic}</li>
+            ))}
+          </ul>
+          {/* <p>관련 검색어</p>
+          <ul>
+            {relatedQueries.map((query, index) => (
+              <li key={index}>{query.query}</li>
+            ))}
+          </ul>
+          <p>관련 주제</p>
+          <ul>
+            {relatedTopics_.map((topic, index) => (
+              <li key={index}>{topic.topic.title}</li>
+            ))}
+          </ul> */}
           <p>위키 서치 데이터</p>
           <ul>
-            <li>제목 : {wikisearchResults.title}</li>
-            <li>요약 : {wikisearchResults.extract}</li>
-            {wikisearchResults && wikisearchResults.originalimage && (
-              <li>
-                이미지: <img src={wikisearchResults.originalimage.source} alt={wikisearchResults.title} style={{ maxWidth: '100%', height: 'auto' }} />
+            {wikisearchResults.map((wiki, index) => (
+              <li key={index}>
+                <div>
+                  <p>제목 : {wiki.title}</p>
+                  <p>요약 : {wiki.extract}</p>
+                </div>
               </li>
-            )}
+            ))}
+          </ul>
+          <p>유튜브 서치 데이터</p>
+          <ul>
+            {setYoutubesearchResults.map((youtube, index) => (
+              <li key={index}>{youtube}</li>
+            ))}
           </ul>
         </header>
       </div>
-  
-  
-  </>
- 
-
-
-
+    </>
   );
 }
 

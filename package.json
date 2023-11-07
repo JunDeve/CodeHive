@@ -19,7 +19,8 @@
     "serp": "^2.2.2",
     "translate": "^2.0.2",
     "web-vitals": "^2.1.4",
-    "wikipedia": "^2.1.1"
+    "wikipedia": "^2.1.1",
+    "youtube-search-api": "^1.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -6,6 +6,7 @@ const googleTrends = require("google-trends-api");
 const port = process.env.PORT || 5000;
 const serp = require("serp");
 const wiki = require('wikipedia');
+const youtubesearchapi = require("youtube-search-api");
 
 app.use(cors());
 
@@ -99,7 +100,7 @@ app.get("/relatedTopics", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      
+
       console.log("관련 주제 : ", results);
       res.json(JSON.parse(results));
     }
@@ -123,10 +124,10 @@ app.get("/search", async (req, res) => {
       safe: "active",
     },
   };
-  
+
   try {
     const searchResults = await serp.search(options);
-    
+
     res.json(searchResults);
   } catch (error) {
     console.error("검색 요청 중 에러 : ", error);
@@ -143,7 +144,7 @@ app.get("/wikisearch", async (req, res) => {
     console.log("위키 검색 결과", page);
 
     const summary = await page.summary();
-		console.log("검색 결과 요약 : ", summary);
+    console.log("검색 결과 요약 : ", summary);
 
     res.json(summary);
   } catch (error) {
@@ -151,6 +152,28 @@ app.get("/wikisearch", async (req, res) => {
   }
 });
 
+// 유튜브 검색 기능
+app.get("/youtubeSearch", async (req, res) => {
+  const keyword = req.query.keyword;
+  youtubesearchapi.GetShortVideo({
+    id: "",
+    type: "reel",
+    thumbnail: {
+      url: '',
+      width: 405,
+      height: 720
+    },
+    title: keyword,
+    inlinePlaybackEndpoint: {}
+  }, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("유튜브 검색 : ", results);
+      res.json(JSON.parse(results));
+    }
+  });
+});
 
 app.listen(port, () => {
   console.log(`>>>> 서버 실행중 : http://localhost:${port}/ <<<<`);
