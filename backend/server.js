@@ -4,10 +4,9 @@ const app = express();
 const axios = require("axios");
 const googleTrends = require("google-trends-api");
 const port = process.env.PORT || 5000;
-const serp = require('serp');
+const serp = require("serp");
 const wiki = require('wikipedia');
-// const youtubesearchapi = require("youtube-search-api");
-const { google } = require('googleapis');
+const youtubesearchapi = require("youtube-search-api");
 
 app.use(cors());
 
@@ -153,59 +152,20 @@ app.get("/wikisearch", async (req, res) => {
   }
 });
 
-// // 유튜브 검색 기능
-// app.get("/youtubeSearch", async (req, res) => {
-//   const keyword = req.query.q;
-//   console.log("유튜브 키워드 : ", keyword);
-//   youtubesearchapi.GetListByKeyword(keyword, true, 1, [{ 
-//     type: "video",
-//     isLive: "false",
-//    }])
-//     .then((searchResults) => {
-//       console.log("유튜브 검색 결과 : ", searchResults);
-//       res.json({ results: searchResults });
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ error: "An error occurred while fetching search results" });
-//     });
-// });
-
 // 유튜브 검색 기능
 app.get("/youtubeSearch", async (req, res) => {
-  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
   const keyword = req.query.q;
-  const youtube = google.youtube('v3');
-
-  youtube.search.list({
-    key: apiKey,
-    q: keyword,
-    part: 'snippet',
-    type: 'video',
-    maxResults: 1,
-    videoDuration: 'short', //4분 이하만 받아와짐
-    order: 'relevance',
-  }, (err, response) => {
-    if (err) {
-      console.error('YouTube Data API 요청 중 오류 발생:', err);
-      res.status(500).json({ error: 'An error occurred while fetching search results' });
-    } else {
-      const searchResults = response.data.items;
-      const videoResults = [];
-      for (const item of searchResults) {
-        const videoItem = {
-          title: item.snippet.title,
-          videoId: item.id.videoId,
-          description: item.snippet.description,
-          thumbnail: item.snippet.thumbnails.default.url
-        };
-        videoResults.push(videoItem);
-      }
-      console.log(videoResults);
-      res.json(videoResults);
-    }
-  });
+  console.log("유튜브 키워드 : ", keyword);
+  youtubesearchapi.GetListByKeyword(keyword, true, 2, [{ type: "video" }])
+    .then((searchResults) => {
+      console.log("유튜브 검색 결과 : ", searchResults);
+      res.json({ results: searchResults });
+    })
+    .catch((error) => {
+      // Handle any errors that may occur during the search
+      res.status(500).json({ error: "An error occurred while fetching search results" });
+    });
 });
-
 
 app.listen(port, () => {
   console.log(`>>>> 서버 실행중 : http://localhost:${port}/ <<<<`);

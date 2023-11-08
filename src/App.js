@@ -106,30 +106,19 @@ function App() {
       }
     };
 
-    // // 유튜브 서치 데이터
-    // const fetchYoutubeSearch = async (keyword) => {
-    //   try {
-    //     const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
-    //     const youtubeSearch = response.data;
-    //     console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
-    //     setYoutubeSearchRusults(youtubeSearch.results.items);
-    //   } catch (error) {
-    //     console.error('요청 중 오류 발생:', error);
-    //   }
-    // }
-
-    const fetchYoutubeSearchData = async (keyword) => {
+    // 유튜브 서치 데이터
+    const fetchYoutubeSearch = async (keyword) => {
       try {
         const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
-        const youtubeSearchData = response.data;
-        console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearchData);
-        setYoutubeSearchRusults(youtubeSearchData);
-        // https://www.youtube.com/shorts/
+        const youtubeSearch = response.data;
+        console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
+        setYoutubeSearchRusults(youtubeSearch.results.items);
       } catch (error) {
         console.error('요청 중 오류 발생:', error);
       }
     }
-    
+
+
     if (keyword !== '') {
       fetchSearchData(keyword)
         .then(() => fetchTrendData())
@@ -137,7 +126,7 @@ function App() {
         // .then(() => fetchRelatedQueries(keyword))
         // .then(() => fetchRelatedTopics(keyword))
         .then(() => fetchWikisearchData(keyword))
-        .then(() => fetchYoutubeSearchData(keyword));
+        .then(() => fetchYoutubeSearch(keyword));
     }
   }, [keyword]);
 
@@ -149,12 +138,12 @@ function App() {
 
   return (
     <> <Router>
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/Search" element={<Search items={itemList} sevaitemList={sevaitemList} />} />
         <Route path="/TextPage" element={<TextPage />} />
-      </Routes> */}
+      </Routes>
     </Router>
 
       <div className="App">
@@ -210,13 +199,15 @@ function App() {
           </ul>
           <p>유튜브 서치 데이터</p>
           <ul>
-          {YoutubesearchResults.map((youtubeSearchRusults, index) => (
+          {YoutubesearchResults.map((youtube, index) => (
           <li key={index}>
             <iframe
               width="560"
               height="315"
-              src={`https://www.youtube.com/embed/${youtubeSearchRusults.videoId}?controls=0&rel=0&showinfo=0&modestbranding=1`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              src={`https://www.youtube.com/embed/${youtube.id}`}
+              title="YouTube Video"
+              frameBorder="0"
+              allowFullScreen
             ></iframe>
           </li>
         ))}
