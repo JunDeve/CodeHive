@@ -16,7 +16,7 @@ function App() {
   // const [relatedQueries, setRelatedQueries] = useState([]);
   // const [relatedTopics_, setRelatedTopics_] = useState([]);
   const [wikisearchResults, setWikisearchResults] = useState([]);
-  const [setYoutubesearchResults, setYoutubeSearchRusults] = useState([]);
+  const [YoutubesearchResults, setYoutubeSearchRusults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
@@ -106,19 +106,30 @@ function App() {
       }
     };
 
-    // 유튜브 서치 데이터
-    const fetchYoutubeSearch = async (keyword) => {
+    // // 유튜브 서치 데이터
+    // const fetchYoutubeSearch = async (keyword) => {
+    //   try {
+    //     const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
+    //     const youtubeSearch = response.data;
+    //     console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
+    //     setYoutubeSearchRusults(youtubeSearch.results.items);
+    //   } catch (error) {
+    //     console.error('요청 중 오류 발생:', error);
+    //   }
+    // }
+
+    const fetchYoutubeSearchData = async (keyword) => {
       try {
         const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
-        const youtubeSearch = response.data;
-        console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
-        setYoutubeSearchRusults(youtubeSearch);
+        const youtubeSearchData = response.data;
+        console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearchData);
+        setYoutubeSearchRusults(youtubeSearchData);
+        // https://www.youtube.com/shorts/
       } catch (error) {
         console.error('요청 중 오류 발생:', error);
       }
     }
-
-
+    
     if (keyword !== '') {
       fetchSearchData(keyword)
         .then(() => fetchTrendData())
@@ -126,7 +137,7 @@ function App() {
         // .then(() => fetchRelatedQueries(keyword))
         // .then(() => fetchRelatedTopics(keyword))
         .then(() => fetchWikisearchData(keyword))
-        .then(() => fetchYoutubeSearch(keyword));
+        .then(() => fetchYoutubeSearchData(keyword));
     }
   }, [keyword]);
 
@@ -138,12 +149,12 @@ function App() {
 
   return (
     <> <Router>
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/Search" element={<Search items={itemList} sevaitemList={sevaitemList} />} />
         <Route path="/TextPage" element={<TextPage />} />
-      </Routes>
+      </Routes> */}
     </Router>
 
       <div className="App">
@@ -199,9 +210,16 @@ function App() {
           </ul>
           <p>유튜브 서치 데이터</p>
           <ul>
-            {setYoutubesearchResults.map((youtube, index) => (
-              <li key={index}>{youtube}</li>
-            ))}
+          {YoutubesearchResults.map((youtubeSearchRusults, index) => (
+          <li key={index}>
+            <iframe
+              width="560"
+              height="315"
+              src={`https://www.youtube.com/embed/${youtubeSearchRusults.videoId}?controls=0&rel=0&showinfo=0&modestbranding=1`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            ></iframe>
+          </li>
+        ))}
           </ul>
         </header>
       </div>
