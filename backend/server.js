@@ -30,7 +30,6 @@ app.get("/trending", (req, res) => {
         console.log(err);
       } else {
         console.log("실시간 트렌드 : ", results);
-        // res.json(results);
         res.json(JSON.parse(results));
       }
     }

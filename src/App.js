@@ -94,7 +94,6 @@ function App() {
       try {
         const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
         const wikisearchData = response.data;
-        console.log(wikisearchData);
         const updatedResults = [...wikisearchResults, {
           title: wikisearchData.title,
           extract: wikisearchData.extract,
