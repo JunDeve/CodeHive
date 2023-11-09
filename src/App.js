@@ -94,9 +94,11 @@ function App() {
       try {
         const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
         const wikisearchData = response.data;
+        console.log(wikisearchData);
         const updatedResults = [...wikisearchResults, {
           title: wikisearchData.title,
           extract: wikisearchData.extract,
+          image: wikisearchData.originalimage.source,
         }];
 
         console.log("백엔드에서 받은 위키 서치 데이터:", updatedResults);
@@ -192,11 +194,7 @@ function App() {
                 <div>
                   <p>제목 : {wiki.title}</p>
                   <p>요약 : {wiki.extract}</p>
-                  {wikisearchResults && wikisearchResults.originalimage && (
-                    <li>
-                      이미지: <img src={wikisearchResults.originalimage.source} alt={wikisearchResults.title} style={{ maxWidth: '100%', height: 'auto' }} />
-                    </li>
-                  )}
+                  <p>이미지: <img src={wiki.image} alt={wiki.title} style={{ maxWidth: '100%', height: 'auto' }} /></p>
                 </div>
               </li>
             ))}
