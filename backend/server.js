@@ -75,11 +75,14 @@ app.get("/relatedQueries", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      console.log("관련 검색어 : ", results);
-      res.json(JSON.parse(results));
+      const parsedResults = JSON.parse(results);
+      topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
+      console.log("관련 검색어 : ", topRankedKeywords);
+      res.json(topRankedKeywords);
+      console.log(topRankedKeywords);
     }
-  });
-});
+  }
+)});
 
 // 관련 주제
 app.get("/relatedTopics", (req, res) => {
@@ -100,9 +103,10 @@ app.get("/relatedTopics", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-
-      console.log("관련 주제 : ", results);
-      res.json(JSON.parse(results));
+      relatedTopicsRu = JSON.parse(results);
+      TopRankedTopics = relatedTopicsRu.default.rankedList[0].rankedKeyword.slice(0, 5);
+      console.log("관련 주제 : ", TopRankedTopics);
+      res.json(TopRankedTopics);
     }
   });
 });

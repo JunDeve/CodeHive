@@ -69,7 +69,7 @@ function App() {
         const response = await axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`);
         const relatedQueriesData = response.data;
         console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
-        setRelatedQueries(relatedQueriesData.default.rankedList[0].rankedKeyword.slice(0, 5));
+        setRelatedQueries(relatedQueriesData);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
       }
@@ -81,7 +81,7 @@ function App() {
         const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
         const relatedTopicsData = response.data;
         console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
-        const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword.slice(0, 5);
+        const relatedTopics_1 = relatedTopicsData;
 
         setRelatedTopics_(relatedTopics_1);
       } catch (error) {
