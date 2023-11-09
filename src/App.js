@@ -13,8 +13,8 @@ function App() {
   const [trends, setTrends] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [daytrends, setDayTrends] = useState([]);
-  // const [relatedQueries, setRelatedQueries] = useState([]);
-  // const [relatedTopics_, setRelatedTopics_] = useState([]);
+  const [relatedQueries, setRelatedQueries] = useState([]);
+  const [relatedTopics_, setRelatedTopics_] = useState([]);
   const [wikisearchResults, setWikisearchResults] = useState([]);
   const [YoutubesearchResults, setYoutubeSearchRusults] = useState([]);
   const [keyword, setKeyword] = useState('');
@@ -63,31 +63,31 @@ function App() {
       }
     };
 
-    // // 관련 검색어
-    // const fetchRelatedQueries = async (newKeyword) => {
-    //   try {
-    //     const response = await axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`);
-    //     const relatedQueriesData = response.data;
-    //     console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
-    //     setRelatedQueries(relatedQueriesData.default.rankedList[0].rankedKeyword.slice(0, 5));
-    //   } catch (error) {
-    //     console.error("요청 중 오류 발생:", error);
-    //   }
-    // };
+    // 관련 검색어
+    const fetchRelatedQueries = async (newKeyword) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`);
+        const relatedQueriesData = response.data;
+        console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
+        setRelatedQueries(relatedQueriesData.default.rankedList[0].rankedKeyword.slice(0, 5));
+      } catch (error) {
+        console.error("요청 중 오류 발생:", error);
+      }
+    };
 
-    // // 관련 주제
-    // const fetchRelatedTopics = async (newKeyword) => {
-    //   try {
-    //     const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
-    //     const relatedTopicsData = response.data;
-    //     console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
-    //     const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword.slice(0, 5);
+    // 관련 주제
+    const fetchRelatedTopics = async (newKeyword) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
+        const relatedTopicsData = response.data;
+        console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
+        const relatedTopics_1 = relatedTopicsData.default.rankedList[0].rankedKeyword.slice(0, 5);
 
-    //     setRelatedTopics_(relatedTopics_1);
-    //   } catch (error) {
-    //     console.error("요청 중 오류 발생:", error);
-    //   }
-    // };
+        setRelatedTopics_(relatedTopics_1);
+      } catch (error) {
+        console.error("요청 중 오류 발생:", error);
+      }
+    };
 
     // 위키 서치 데이터
     const fetchWikisearchData = async (keyword) => {
@@ -106,36 +106,24 @@ function App() {
       }
     };
 
-    // // 유튜브 서치 데이터
-    // const fetchYoutubeSearch = async (keyword) => {
-    //   try {
-    //     const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
-    //     const youtubeSearch = response.data;
-    //     console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearch);
-    //     setYoutubeSearchRusults(youtubeSearch.results.items);
-    //   } catch (error) {
-    //     console.error('요청 중 오류 발생:', error);
-    //   }
-    // }
-
+    //유튜브 쇼츠 데이터
     const fetchYoutubeSearchData = async (keyword) => {
       try {
         const response = await axios.get(`http://localhost:5000/youtubeSearch?q=${keyword}`);
         const youtubeSearchData = response.data;
         console.log("백엔드에서 받은 유튜브 서치 데이터:", youtubeSearchData);
         setYoutubeSearchRusults(youtubeSearchData);
-        // https://www.youtube.com/shorts/
       } catch (error) {
         console.error('요청 중 오류 발생:', error);
       }
     }
-    
+
     if (keyword !== '') {
       fetchSearchData(keyword)
         .then(() => fetchTrendData())
         .then(() => fetchDayTrendData())
-        // .then(() => fetchRelatedQueries(keyword))
-        // .then(() => fetchRelatedTopics(keyword))
+        .then(() => fetchRelatedQueries(keyword))
+        .then(() => fetchRelatedTopics(keyword))
         .then(() => fetchWikisearchData(keyword))
         .then(() => fetchYoutubeSearchData(keyword));
     }
@@ -149,12 +137,12 @@ function App() {
 
   return (
     <> <Router>
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/Search" element={<Search items={itemList} sevaitemList={sevaitemList} />} />
         <Route path="/TextPage" element={<TextPage />} />
-      </Routes> */}
+      </Routes>
     </Router>
 
       <div className="App">
@@ -185,7 +173,7 @@ function App() {
               <li key={index}>{daystory.title.query}, {daystory.formattedTraffic}</li>
             ))}
           </ul>
-          {/* <p>관련 검색어</p>
+          <p>관련 검색어</p>
           <ul>
             {relatedQueries.map((query, index) => (
               <li key={index}>{query.query}</li>
@@ -196,7 +184,7 @@ function App() {
             {relatedTopics_.map((topic, index) => (
               <li key={index}>{topic.topic.title}</li>
             ))}
-          </ul> */}
+          </ul>
           <p>위키 서치 데이터</p>
           <ul>
             {wikisearchResults.map((wiki, index) => (
@@ -204,22 +192,27 @@ function App() {
                 <div>
                   <p>제목 : {wiki.title}</p>
                   <p>요약 : {wiki.extract}</p>
+                  {wikisearchResults && wikisearchResults.originalimage && (
+                    <li>
+                      이미지: <img src={wikisearchResults.originalimage.source} alt={wikisearchResults.title} style={{ maxWidth: '100%', height: 'auto' }} />
+                    </li>
+                  )}
                 </div>
               </li>
             ))}
           </ul>
           <p>유튜브 서치 데이터</p>
           <ul>
-          {YoutubesearchResults.map((youtubeSearchRusults, index) => (
-          <li key={index}>
-            <iframe
-              width="560"
-              height="315"
-              src={`https://www.youtube.com/embed/${youtubeSearchRusults.videoId}?controls=0&rel=0&showinfo=0&modestbranding=1`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            ></iframe>
-          </li>
-        ))}
+            {YoutubesearchResults.map((youtubeSearchRusults, index) => (
+              <li key={index}>
+                <iframe
+                  width="560"
+                  height="315"
+                  src={`https://www.youtube.com/embed/${youtubeSearchRusults.videoId}?controls=0&rel=0&showinfo=0&modestbranding=1`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                ></iframe>
+              </li>
+            ))}
           </ul>
         </header>
       </div>

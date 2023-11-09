@@ -6,7 +6,6 @@ const googleTrends = require("google-trends-api");
 const port = process.env.PORT || 5000;
 const serp = require('serp');
 const wiki = require('wikipedia');
-// const youtubesearchapi = require("youtube-search-api");
 const { google } = require('googleapis');
 
 app.use(cors());
@@ -152,23 +151,6 @@ app.get("/wikisearch", async (req, res) => {
     console.error("검색 요청 중 에러 : ", error);
   }
 });
-
-// // 유튜브 검색 기능
-// app.get("/youtubeSearch", async (req, res) => {
-//   const keyword = req.query.q;
-//   console.log("유튜브 키워드 : ", keyword);
-//   youtubesearchapi.GetListByKeyword(keyword, true, 1, [{ 
-//     type: "video",
-//     isLive: "false",
-//    }])
-//     .then((searchResults) => {
-//       console.log("유튜브 검색 결과 : ", searchResults);
-//       res.json({ results: searchResults });
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ error: "An error occurred while fetching search results" });
-//     });
-// });
 
 // 유튜브 검색 기능
 app.get("/youtubeSearch", async (req, res) => {
