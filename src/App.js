@@ -23,10 +23,10 @@ function App() {
     // 구글 서치 데이터
     const fetchSearchData = async (keyword) => {
       try {
-        const response = await axios.get(`http://localhost:5000/search?q=${keyword}`);
+        const response = await axios.get(`http://localhost:5000/search?q="${keyword}"`);
         const searchData = response.data;
         console.log("백엔드에서 받은 검색 결과:", searchData);
-        const firstTenResults = searchData.slice(0, 5);
+        const firstTenResults = searchData.slice(0, 2);
         setSearchResults(firstTenResults);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
