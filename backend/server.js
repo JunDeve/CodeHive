@@ -30,14 +30,13 @@ app.get("/trending", (req, res) => {
         console.log(err);
       } else {
         console.log("실시간 트렌드 : ", results);
-        // res.json(results);
         res.json(JSON.parse(results));
       }
     }
   );
 });
 
-// 트렌드 중 일일별 인기
+// 트렌드 중 일일별 인기(오늘)
 app.get("/daytrending", (req, res) => {
   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
   googleTrends.apiKey = apiKey;
@@ -54,7 +53,30 @@ app.get("/daytrending", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      console.log("일일 트렌드 : ", results);
+      console.log("오늘 트렌드 : ", results);
+      res.json(JSON.parse(results));
+    }
+  });
+});
+
+// 트렌드 중 일일별 인기(어제)
+app.get("/yesterdaytrending", (req, res) => {
+  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+  googleTrends.apiKey = apiKey;
+
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
+
+  googleTrends.dailyTrends({
+    trendDate: formattedDate,
+    geo: 'KR',
+  }, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("오늘 트렌드 : ", results);
       res.json(JSON.parse(results));
     }
   });
@@ -113,7 +135,7 @@ app.get("/relatedTopics", (req, res) => {
 
 // 검색 기능
 app.get("/search", async (req, res) => {
-  const KEY = '400cee3fddff018623f67a238776b71999f8345693a1353b190ced2c7700deb2';
+  const KEY = '069d85c726af4bcb8f5ab1bc9fc539aaa86f54e11441f36735f044f87d9f6e53';
   const keyword = req.query.q;
   const options = {
     qs: {

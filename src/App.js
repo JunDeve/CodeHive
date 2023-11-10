@@ -13,6 +13,7 @@ function App() {
   const [trends, setTrends] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [daytrends, setDayTrends] = useState([]);
+  const [yesterdaytrends, setYesterDayTrends] = useState([]);
   const [relatedQueries, setRelatedQueries] = useState([]);
   const [relatedTopics_, setRelatedTopics_] = useState([]);
   const [wikisearchResults, setWikisearchResults] = useState([]);
@@ -23,10 +24,10 @@ function App() {
     // 구글 서치 데이터
     const fetchSearchData = async (keyword) => {
       try {
-        const response = await axios.get(`http://localhost:5000/search?q=${keyword}`);
+        const response = await axios.get(`http://localhost:5000/search?q="${keyword}"`);
         const searchData = response.data;
         console.log("백엔드에서 받은 검색 결과:", searchData);
-        const firstTenResults = searchData.slice(0, 5);
+        const firstTenResults = searchData.slice(0, 2);
         setSearchResults(firstTenResults);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
@@ -47,7 +48,7 @@ function App() {
       }
     };
 
-    // 일일 트렌드 데이터
+    // 일일 트렌드 데이터(오늘)
     const fetchDayTrendData = async () => {
       try {
         const response = await axios.get("http://localhost:5000/daytrending");
@@ -58,6 +59,22 @@ function App() {
         const DayTrendingStories_2 = DayTrendingStories.trendingSearches.slice(0, 5);
 
         setDayTrends(DayTrendingStories_2);
+      } catch (error) {
+        console.error("요청 중 오류 발생:", error);
+      }
+    };
+    
+    // 일일 트렌드 데이터(어제)
+    const fetchYesterDayTrendData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/yesterdaytrending");
+        const daytrendData = response.data;
+        console.log("백엔드에서 받은 어제 트렌드 데이터:", daytrendData);
+
+        const YesterdayDayTrendingStories = daytrendData.default.trendingSearchesDays[1];
+        const YesterdayDayTrendingStories_2 = YesterdayDayTrendingStories.trendingSearches.slice(0, 5);
+
+        setYesterDayTrends(YesterdayDayTrendingStories_2);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
       }
@@ -94,7 +111,6 @@ function App() {
       try {
         const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
         const wikisearchData = response.data;
-        console.log(wikisearchData);
         const updatedResults = [...wikisearchResults, {
           title: wikisearchData.title,
           extract: wikisearchData.extract,
@@ -124,6 +140,7 @@ function App() {
       fetchSearchData(keyword)
         .then(() => fetchTrendData())
         .then(() => fetchDayTrendData())
+        .then(() => fetchYesterDayTrendData())
         .then(() => fetchRelatedQueries(keyword))
         .then(() => fetchRelatedTopics(keyword))
         .then(() => fetchWikisearchData(keyword))
@@ -149,7 +166,7 @@ function App() {
 
       <div className="App">
         <header className="App-header">
-          <p>서치확인</p>
+          <p>서치확인</p><hr/>
           <input
             type="button"
             value="자전거"
@@ -163,31 +180,37 @@ function App() {
               </li>
             ))}
           </ul>
-          <p>실시간 인기 검색어</p>
+          <br/><p>실시간 인기 검색어</p><hr/>
           <ul>
             {trends.map((story, index) => (
               <li key={index}>{story.title}</li>
             ))}
           </ul>
-          <p>일별 인기 급상승 검색어</p>
+          <br/><p>일별 인기 급상승 검색어(오늘)</p><hr/>
           <ul>
             {daytrends.map((daystory, index) => (
               <li key={index}>{daystory.title.query}, {daystory.formattedTraffic}</li>
             ))}
           </ul>
-          <p>관련 검색어</p>
+          <br/><p>일별 인기 급상승 검색어(어제)</p><hr/>
+          <ul>
+            {yesterdaytrends.map((daystory2, index) => (
+              <li key={index}>{daystory2.title.query}, {daystory2.formattedTraffic}</li>
+            ))}
+          </ul>
+          <br/><p>관련 검색어</p><hr/>
           <ul>
             {relatedQueries.map((query, index) => (
               <li key={index}>{query.query}</li>
             ))}
           </ul>
-          <p>관련 주제</p>
+          <br/><p>관련 주제</p><hr/>
           <ul>
             {relatedTopics_.map((topic, index) => (
               <li key={index}>{topic.topic.title}</li>
             ))}
           </ul>
-          <p>위키 서치 데이터</p>
+          <br/><p>위키 서치 데이터</p><hr/>
           <ul>
             {wikisearchResults.map((wiki, index) => (
               <li key={index}>
@@ -199,7 +222,7 @@ function App() {
               </li>
             ))}
           </ul>
-          <p>유튜브 서치 데이터</p>
+          <br/><p>유튜브 서치 데이터</p><hr/>
           <ul>
             {YoutubesearchResults.map((youtubeSearchRusults, index) => (
               <li key={index}>
