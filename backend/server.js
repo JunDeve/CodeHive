@@ -100,7 +100,7 @@ app.get("/relatedQueries", (req, res) => {
       const parsedResults = JSON.parse(results);
       topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
       console.log("관련 검색어 : ", topRankedKeywords);
-      res.json(topRankedKeywords);
+      // res.json(topRankedKeywords);
       console.log(topRankedKeywords);
     }
   }
@@ -210,6 +210,29 @@ app.get("/youtubeSearch", async (req, res) => {
       }
       console.log(videoResults);
       res.json(videoResults);
+    }
+  });
+});
+
+// 관심도 변화
+app.get("/interestedTime", (req, res) => {
+  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+  googleTrends.apiKey = apiKey;
+
+  const keyword = req.query.keyword;
+
+  googleTrends.interestOverTime({
+    keyword: keyword,
+    startTime: new  Date ( Date . now ( )  -  ( 720 * 60 * 60 * 1000 ) ),
+    geo: 'KR',
+    hl: 'ko',
+  }, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("관심도 변화 : ", results);
+
+      res.json(results);
     }
   });
 });

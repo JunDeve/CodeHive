@@ -18,6 +18,7 @@ function App() {
   const [relatedTopics_, setRelatedTopics_] = useState([]);
   const [wikisearchResults, setWikisearchResults] = useState([]);
   const [YoutubesearchResults, setYoutubeSearchRusults] = useState([]);
+  const [interestedDataResults, setinterestedDataResults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
@@ -136,13 +137,32 @@ function App() {
       }
     }
 
+    // 관심도 변화
+    const fetchinterestedTime = async (newKeyword) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/interestedTime?keyword=${newKeyword}`);
+        const interestedData = response.data;
+        console.log("백엔드에서 받은 관심도 변화:", interestedData);
+        const updatedResults = [...interestedData, {
+          formattedAxisTime: interestedData.formattedAxisTime,
+          value: interestedData.value,
+        }];
+        console.log("관심도 변화 변환 결과값 : ", updatedResults);
+
+        // setinterestedDataResults(interestedData)
+      } catch (error) {
+        console.error("요청 중 오류 발생:", error);
+      }
+    };
+
     if (keyword !== '') {
       fetchSearchData(keyword)
         // .then(() => fetchTrendData())
         .then(() => fetchDayTrendData())
         .then(() => fetchYesterDayTrendData())
-        .then(() => fetchRelatedQueries(keyword))
-        .then(() => fetchRelatedTopics(keyword))
+        // .then(() => fetchRelatedQueries(keyword))
+        // .then(() => fetchRelatedTopics(keyword))
+        .then(() => fetchinterestedTime(keyword))
         .then(() => fetchWikisearchData(keyword))
         .then(() => fetchYoutubeSearchData(keyword));
     }
