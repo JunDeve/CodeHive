@@ -220,7 +220,7 @@ app.get("/interestedTime", (req, res) => {
   googleTrends.apiKey = apiKey;
 
   const keyword = req.query.keyword;
-
+  console.log("관심도 변화 키워드 : ", keyword);
   googleTrends.interestOverTime({
     keyword: keyword,
     startTime: new  Date ( Date . now ( )  -  ( 720 * 60 * 60 * 1000 ) ),
@@ -231,8 +231,8 @@ app.get("/interestedTime", (req, res) => {
       console.log(err);
     } else {
       console.log("관심도 변화 : ", results);
-
-      res.json(results);
+      InterestedData = JSON.parse(results);
+      res.json(InterestedData);
     }
   });
 });

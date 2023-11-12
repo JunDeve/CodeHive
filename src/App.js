@@ -143,13 +143,8 @@ function App() {
         const response = await axios.get(`http://localhost:5000/interestedTime?keyword=${newKeyword}`);
         const interestedData = response.data;
         console.log("백엔드에서 받은 관심도 변화:", interestedData);
-        const updatedResults = [...interestedData, {
-          formattedAxisTime: interestedData.formattedAxisTime,
-          value: interestedData.value,
-        }];
-        console.log("관심도 변화 변환 결과값 : ", updatedResults);
 
-        // setinterestedDataResults(interestedData)
+        setinterestedDataResults(interestedData.default.timelineData);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
       }
@@ -249,10 +244,21 @@ function App() {
               </li>
             ))}
           </ul>
+          <br /><p>시간 흐름에 따른 관심도 변화(지난 30일)</p><hr />
+          <ul>
+            {interestedDataResults.map((interest, index) => (
+              <React.Fragment key={index}>
+                <li>날짜 : {interest.formattedAxisTime}</li>
+                <li>값 : {interest.value}</li>
+              </React.Fragment>
+            ))}
+          </ul>
         </header>
       </div>
     </>
   );
 }
+
+// interestedDataResults
 
 export default App;
