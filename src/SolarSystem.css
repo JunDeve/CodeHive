@@ -1,0 +1,17 @@
+.planet {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 50% 50%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .planet-name {
+    color: black;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 5px;
+
+  }

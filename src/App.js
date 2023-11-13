@@ -8,7 +8,7 @@ import axios from "axios";
 
 function App() {
   const itemList = ["운동", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7"];
-  const sevaitemList = ["운동", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8"];//searchText 의 값을 받아와야댐
+  const sevaitemList = ["운동", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8"];
 
   // const [trends, setTrends] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
@@ -34,20 +34,6 @@ function App() {
         console.error("요청 중 오류 발생:", error);
       }
     };
-
-    // // 24 구글 트렌드 데이터
-    // const fetchTrendData = async () => {
-    //   try {
-    //     const response = await axios.get("http://localhost:5000/trending");
-    //     const trendData = response.data;
-    //     console.log("백엔드에서 받은 트렌드 데이터:", trendData);
-
-    //     const topTrendingStories = trendData.storySummaries.trendingStories.slice(0, 5);
-    //     setTrends(topTrendingStories);
-    //   } catch (error) {
-    //     console.error("요청 중 오류 발생:", error);
-    //   }
-    // };
 
     // 일일 트렌드 데이터(오늘)
     const fetchDayTrendData = async () => {
@@ -152,11 +138,15 @@ function App() {
 
     if (keyword !== '') {
       fetchSearchData(keyword)
-        // .then(() => fetchTrendData())
         .then(() => fetchDayTrendData())
         .then(() => fetchYesterDayTrendData())
+<<<<<<< Updated upstream
         // .then(() => fetchRelatedQueries(keyword))
         // .then(() => fetchRelatedTopics(keyword))
+=======
+        .then(() => fetchRelatedQueries(keyword))
+        .then(() => fetchRelatedTopics(keyword))
+>>>>>>> Stashed changes
         .then(() => fetchinterestedTime(keyword))
         .then(() => fetchWikisearchData(keyword))
         .then(() => fetchYoutubeSearchData(keyword));

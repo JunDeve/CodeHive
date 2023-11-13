@@ -14,28 +14,6 @@ app.get("/", (req, res) => {
   res.send("백엔드 시작화면");
 });
 
-// // 트렌드 중 실시간 인기(24시간 올카테고리)
-// app.get("/trending", (req, res) => {
-//   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
-//   googleTrends.apiKey = apiKey;
-
-//   googleTrends.realTimeTrends(
-//     {
-//       geo: 'US',
-//       hl: 'ko',
-//       category: 'all',
-//     },
-//     function (err, results) {
-//       if (err) {
-//         console.log(err);
-//       } else {
-//         console.log("실시간 트렌드 : ", results);
-//         res.json(JSON.parse(results));
-//       }
-//     }
-//   );
-// });
-
 // 트렌드 중 일일별 인기(오늘)
 app.get("/daytrending", (req, res) => {
   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
@@ -100,8 +78,12 @@ app.get("/relatedQueries", (req, res) => {
       const parsedResults = JSON.parse(results);
       topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
       console.log("관련 검색어 : ", topRankedKeywords);
+<<<<<<< Updated upstream
       // res.json(topRankedKeywords);
       console.log(topRankedKeywords);
+=======
+      res.json(topRankedKeywords);
+>>>>>>> Stashed changes
     }
   }
 )});
