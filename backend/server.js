@@ -78,12 +78,7 @@ app.get("/relatedQueries", (req, res) => {
       const parsedResults = JSON.parse(results);
       topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
       console.log("관련 검색어 : ", topRankedKeywords);
-<<<<<<< Updated upstream
-      // res.json(topRankedKeywords);
-      console.log(topRankedKeywords);
-=======
       res.json(topRankedKeywords);
->>>>>>> Stashed changes
     }
   }
 )});

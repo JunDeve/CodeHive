@@ -140,13 +140,8 @@ function App() {
       fetchSearchData(keyword)
         .then(() => fetchDayTrendData())
         .then(() => fetchYesterDayTrendData())
-<<<<<<< Updated upstream
-        // .then(() => fetchRelatedQueries(keyword))
-        // .then(() => fetchRelatedTopics(keyword))
-=======
         .then(() => fetchRelatedQueries(keyword))
         .then(() => fetchRelatedTopics(keyword))
->>>>>>> Stashed changes
         .then(() => fetchinterestedTime(keyword))
         .then(() => fetchWikisearchData(keyword))
         .then(() => fetchYoutubeSearchData(keyword));
