@@ -93,7 +93,6 @@ app.get("/relatedTopics", (req, res) => {
   googleTrends.relatedTopics({
     keyword: keyword,
     startTime: new Date('2010-01-01'),
-    // 2010년 이전자료에는 이상한 토픽이 엄청 많음
     hl: 'ko',
   }, function (err, results) {
     if (err) {
