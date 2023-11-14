@@ -95,8 +95,6 @@ app.get("/relatedTopics", (req, res) => {
 
   googleTrends.relatedTopics({
     keyword: keyword,
-    startTime: new Date('2010-01-01'),
-    endTime: endTime,
     hl: 'ko',
   }, function (err, results) {
     if (err) {
