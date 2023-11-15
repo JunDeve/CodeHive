@@ -60,28 +60,28 @@ app.get("/yesterdaytrending", (req, res) => {
   });
 });
 
-// 관련 검색어
-app.get("/relatedQueries", (req, res) => {
-  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
-  googleTrends.apiKey = apiKey;
+// // 관련 검색어
+// app.get("/relatedQueries", (req, res) => {
+//   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+//   googleTrends.apiKey = apiKey;
 
-  const keyword = req.query.keyword;
+//   const keyword = req.query.keyword;
 
-  googleTrends.relatedQueries({
-    keyword: keyword,
-    geo: 'KR',
-    hl: 'KR',
-  }, function (err, results) {
-    if (err) {
-      console.log(err);
-    } else {
-      const parsedResults = JSON.parse(results);
-      topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
-      console.log("관련 검색어 : ", topRankedKeywords);
-      res.json(topRankedKeywords);
-    }
-  }
-)});
+//   googleTrends.relatedQueries({
+//     keyword: keyword,
+//     geo: 'KR',
+//     hl: 'KR',
+//   }, function (err, results) {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       const parsedResults = JSON.parse(results);
+//       topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
+//       console.log("관련 검색어 : ", topRankedKeywords);
+//       res.json(topRankedKeywords);
+//     }
+//   }
+// )});
 
 // 관련 주제
 app.get("/relatedTopics", (req, res) => {
