@@ -70,7 +70,7 @@ function App() {
     // 관련 검색어
     const fetchRelatedQueries = async (newKeyword) => {
       try {
-        const response = await axios.get(`http://localhost:5000/relatedQueries?keyword=${newKeyword}`);
+        const response = await axios.get(`https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/relatedQueries?keyword=${newKeyword}`);
         const relatedQueriesData = response.data;
         console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
         setRelatedQueries(relatedQueriesData);
@@ -78,15 +78,15 @@ function App() {
         console.error("요청 중 오류 발생:", error);
       }
     };
+    
 
     // 관련 주제
     const fetchRelatedTopics = async (newKeyword) => {
       try {
-        const response = await axios.get(`http://localhost:5000/relatedTopics?keyword=${newKeyword}`);
+        const response = await axios.get(`https://us-central1-powerful-anchor-405101.cloudfunctions.net/relatedTopics?keyword=${newKeyword}`);
         const relatedTopicsData = response.data;
         console.log("백엔드에서 받은 관련 주제:", relatedTopicsData);
         const relatedTopics_1 = relatedTopicsData;
-
         setRelatedTopics_(relatedTopics_1);
       } catch (error) {
         console.error("요청 중 오류 발생:", error);
