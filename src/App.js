@@ -21,6 +21,8 @@ function App() {
   const [interestedDataResults, setinterestedDataResults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
+
+
   useEffect(() => {
     // 구글 서치 데이터
     const fetchSearchData = async (keyword) => {
@@ -70,7 +72,11 @@ function App() {
     // 관련 검색어
     const fetchRelatedQueries = async (newKeyword) => {
       try {
-        const response = await axios.get(`https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/relatedQueries?keyword=${newKeyword}`);
+        const response = await axios.get(
+          `https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/relatedQueries?keyword=${newKeyword}`,
+          { withCredentials: true, headers: { 'Access-Control-Allow-Origin': '*' } }
+        );
+        
         const relatedQueriesData = response.data;
         console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
         setRelatedQueries(relatedQueriesData);
