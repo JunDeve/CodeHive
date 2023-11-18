@@ -5,6 +5,7 @@ import Search from '../src/Search/Main/Searchmain';
 import TextPage from './TextPage/TextPage';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from "axios";
+import OpenAI from 'openai';
 
 function App() {
   const itemList = ["운동", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7"];
@@ -20,7 +21,9 @@ function App() {
   const [YoutubesearchResults, setYoutubeSearchRusults] = useState([]);
   const [interestedDataResults, setinterestedDataResults] = useState([]);
   const [keyword, setKeyword] = useState('');
-
+  
+  const apiKey = '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';
+  const endpoint = 'https://api.openai.com/v1/chat/completions';
 
 
   useEffect(() => {
@@ -98,23 +101,57 @@ function App() {
       }
     };
 
-    // 위키 서치 데이터
-    const fetchWikisearchData = async (keyword) => {
-      try {
-        const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
-        const wikisearchData = response.data;
-        const updatedResults = [...wikisearchResults, {
-          title: wikisearchData.title,
-          extract: wikisearchData.extract,
-          image: wikisearchData.originalimage.source,
-        }];
+    // // 위키 서치 데이터
+    // const fetchWikisearchData = async (keyword) => {
+    //   try {
+    //     const response = await axios.get(`http://localhost:5000/wikisearch?q=${keyword}`);
+    //     const wikisearchData = response.data;
+    //     const updatedResults = [...wikisearchResults, {
+    //       title: wikisearchData.title,
+    //       extract: wikisearchData.extract,
+    //       image: wikisearchData.originalimage.source,
+    //     }];
 
-        console.log("백엔드에서 받은 위키 서치 데이터:", updatedResults);
-        setWikisearchResults(updatedResults);
+    //     console.log("백엔드에서 받은 위키 서치 데이터:", updatedResults);
+    //     setWikisearchResults(updatedResults);
+    //   } catch (error) {
+    //     console.error('요청 중 오류 발생:', error);
+    //   }
+    // };
+
+    //챗 gpt 대화 데이터
+    async function fetchChatGPTData(query) {
+      try {
+        const response = await axios.post(
+          endpoint,
+          {
+            model: 'gpt-3.5-turbo',
+            messages: [
+              { role: 'system', content: 'You are a helpful assistant.' },
+              { role: 'user', content: query },
+            ],
+            temperature: 1,
+            max_tokens: 256,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`,
+            },
+          }
+        );
+    
+        const chatGPTData = response.data.choices[0].message.content;
+        console.log("OpenAI 채팅 결과:", chatGPTData);
+    
+        // 이후 chatGPTData를 활용한 작업을 진행할 수 있습니다.
       } catch (error) {
-        console.error('요청 중 오류 발생:', error);
+        console.error('OpenAI 채팅 요청 중 에러:', error);
       }
-    };
+    }
 
     //유튜브 쇼츠 데이터
     const fetchYoutubeSearchData = async (keyword) => {
@@ -145,11 +182,12 @@ function App() {
       fetchSearchData(keyword)
         .then(() => fetchDayTrendData())
         .then(() => fetchYesterDayTrendData())
-        .then(() => fetchRelatedQueries(keyword))
-        .then(() => fetchRelatedTopics(keyword))
+        // .then(() => fetchRelatedQueries(keyword))
+        // .then(() => fetchRelatedTopics(keyword))
         .then(() => fetchinterestedTime(keyword))
-        .then(() => fetchWikisearchData(keyword))
-        .then(() => fetchYoutubeSearchData(keyword));
+        // .then(() => fetchWikisearchData(keyword))
+        .then(() => fetchYoutubeSearchData(keyword))
+        .then(() => fetchChatGPTData(keyword));
     }
   }, [keyword]);
 

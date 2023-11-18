@@ -7,6 +7,7 @@ const port = process.env.PORT || 5000;
 const serp = require('serp');
 const wiki = require('wikipedia');
 const { google } = require('googleapis');
+const OpenAI = require('openai');
 
 app.use(cors());
 
@@ -131,23 +132,25 @@ app.get("/search", async (req, res) => {
   }
 });
 
-// 위키 검색 기능
-app.get("/wikisearch", async (req, res) => {
-  const keyword = req.query.q;
-  try {
-    await wiki.setLang('ko');
+// // 위키 검색 기능
+// app.get("/wikisearch", async (req, res) => {
+//   const keyword = req.query.q;
+//   try {
+//     await wiki.setLang('ko');
 
-    const page = await wiki.page(keyword);
-    console.log("위키 검색 결과", page);
+//     const page = await wiki.page(keyword);
+//     console.log("위키 검색 결과", page);
 
-    const summary = await page.summary();
-    console.log("검색 결과 요약 : ", summary);
+//     const summary = await page.summary();
+//     console.log("검색 결과 요약 : ", summary);
 
-    res.json(summary);
-  } catch (error) {
-    console.error("검색 요청 중 에러 : ", error);
-  }
-});
+//     res.json(summary);
+//   } catch (error) {
+//     console.error("검색 요청 중 에러 : ", error);
+//   }
+// });
+
+
 
 // 유튜브 검색 기능
 app.get("/youtubeSearch", async (req, res) => {
