@@ -109,28 +109,25 @@ app.get("/yesterdaytrending", (req, res) => {
 
 // 검색 기능
 app.get("/search", async (req, res) => {
-  const KEY = '069d85c726af4bcb8f5ab1bc9fc539aaa86f54e11441f36735f044f87d9f6e53';
-  const keyword = req.query.q;
-  const options = {
-    qs: {
-      q: keyword,
-      engine: "google",
-      location: "South Korea",
-      gl: "kr",
-      hl: "ko",
-      google_domain: "google.co.kr",
-      num: 10,
-      start: 0,
-      safe: "active",
-    },
-  };
+  const apiKey = "AIzaSyA-ja8wyNG9BXHh0xqik39yWeLybm23tGA";
+  const searchEngineId = "b6cc251a7b2a1452a";
+  const searchQuery = req.query.q || "default_query";
 
   try {
-    const searchResults = await serp.search(options);
+    const response = await axios.get(
+      `https://www.googleapis.com/customsearch/v1?q=${searchQuery}&cx=${searchEngineId}&searchType=image&key=${apiKey}`
+    );
 
-    res.json(searchResults);
+    const images = response.data.items.map((item) => ({
+      url: item.link,
+      snippet: item.snippet,
+      thumbnail: item.image.thumbnailLink,
+      context: item.image.contextLink,
+    }));
+
+    res.json(images);
   } catch (error) {
-    console.error("검색 요청 중 에러 : ", error);
+    console.error("이미지 검색 에러:", error.message);
   }
 });
 

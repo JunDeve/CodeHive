@@ -21,17 +21,18 @@ function App() {
   const [interestedDataResults, setinterestedDataResults] = useState([]);
   const [keyword, setKeyword] = useState('');
 
+
+
   useEffect(() => {
     // 구글 서치 데이터
     const fetchSearchData = async (keyword) => {
       try {
-        const response = await axios.get(`http://localhost:5000/search?q="${keyword}"`);
+        const response = await axios.get(`http://localhost:5000/search?q=${keyword}`);
         const searchData = response.data;
-        console.log("백엔드에서 받은 검색 결과:", searchData);
-        const firstTenResults = searchData.slice(0, 2);
-        setSearchResults(firstTenResults);
+        console.log("백엔드에서 받은 검색 결과:", searchData)
+        setSearchResults(searchData);
       } catch (error) {
-        console.error("요청 중 오류 발생:", error);
+        console.error("이미지 검색 에러:", error.message);
       }
     };
 
@@ -70,7 +71,11 @@ function App() {
     // 관련 검색어
     const fetchRelatedQueries = async (newKeyword) => {
       try {
-        const response = await axios.get(`https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/relatedQueries?keyword=${newKeyword}`);
+        const response = await axios.get(
+          `https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/relatedQueries?keyword=${newKeyword}`,
+          { withCredentials: true, headers: { 'Access-Control-Allow-Origin': '*' } }
+        );
+        
         const relatedQueriesData = response.data;
         console.log("백엔드에서 받은 관련 검색어:", relatedQueriesData);
         setRelatedQueries(relatedQueriesData);
@@ -172,14 +177,14 @@ function App() {
             value="자전거"
             onClick={() => handleSearch('자전거')}
           />
-          <ul>
+          {/* <ul>
             {searchResults.map((result, index) => (
               <li key={index}>
                 <div>{result.title}</div>
                 <div>{result.url}</div>
               </li>
             ))}
-          </ul>
+          </ul> */}
           <br/><p>일별 인기 급상승 검색어(오늘)</p><hr/>
           <ul>
             {daytrends.map((daystory, index) => (
