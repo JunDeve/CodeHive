@@ -4,7 +4,6 @@ const app = express();
 const axios = require("axios");
 const googleTrends = require("google-trends-api");
 const port = process.env.PORT || 5000;
-const serp = require('serp');
 const wiki = require('wikipedia');
 const { google } = require('googleapis');
 const OpenAI = require('openai');
@@ -194,10 +193,17 @@ app.get("/interestedTime", (req, res) => {
   googleTrends.apiKey = apiKey;
 
   const keyword = req.query.keyword;
-  console.log("관심도 변화 키워드 : ", keyword);
+
+  const today = new Date();
+  today.setDate(today.getDate() - 30);
+
+  const formattedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  console.log("관심도 변화 날짜 : ", formattedDate);
+  
   googleTrends.interestOverTime({
     keyword: keyword,
-    startTime: new  Date ( Date . now ( )  -  ( 720 * 60 * 60 * 1000 ) ),
+    startTime: formattedDate,
     geo: 'KR',
     hl: 'ko',
   }, function (err, results) {

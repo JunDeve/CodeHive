@@ -18,6 +18,7 @@ function App() {
   const [wikisearchResults, setWikisearchResults] = useState([]);
   const [YoutubesearchResults, setYoutubeSearchRusults] = useState([]);
   const [interestedDataResults, setinterestedDataResults] = useState([]);
+  const [DayDate, setDayDate] = useState([]);
   const [keyword, setKeyword] = useState('');
 
   const apiKey = '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';
@@ -31,10 +32,10 @@ function App() {
         await fetchYesterDayTrendData();
         // await fetchRelatedQueries(keyword);
         // await fetchRelatedTopics(keyword);
-        // await fetchinterestedTime(keyword);
+        await fetchinterestedTime(keyword);
         // await fetchWikisearchData(keyword);
         await fetchYoutubeSearchData(keyword);
-        await fetchChatGPTData(keyword);
+        // await fetchChatGPTData(keyword);
       } catch (error) {
         console.error('에러 발생:', error);
       }
@@ -171,15 +172,37 @@ function App() {
     }
   };
 
+  // const fetchinterestedTime = async (newKeyword) => {
+  //   try {
+  //     const response = await axios.get(`http://localhost:5000/interestedTime?keyword=${newKeyword}`);
+  //     const interestedData = response.data;
+  //     console.log('백엔드에서 받은 관심도 변화:', interestedData);
+
+  //     setinterestedDataResults(interestedData.default.timelineData);
+  //   } catch (error) {
+  //     console.error('요청 중 오류 발생:', error);
+  //   }
+  // };
+
+  //관심도 변화
   const fetchinterestedTime = async (newKeyword) => {
     try {
       const response = await axios.get(`http://localhost:5000/interestedTime?keyword=${newKeyword}`);
       const interestedData = response.data;
-      console.log('백엔드에서 받은 관심도 변화:', interestedData);
-
-      setinterestedDataResults(interestedData.default.timelineData);
+      const list = []
+      const list2 = []
+      for (let i = 0; i < interestedData.default.timelineData.length; i++) {
+        list.push(interestedData.default.timelineData[i].value[0]);
+        const formattedTime = interestedData.default.timelineData[i].formattedTime;
+        const monthDay = formattedTime.slice(5 , 12);
+        list2.push(monthDay);
+      }
+      console.log("list : ", list);
+      console.log("list2 : ", list2);
+      setDayDate(list2);
+      setinterestedDataResults(list);
     } catch (error) {
-      console.error('요청 중 오류 발생:', error);
+      console.error("요청 중 오류 발생:", error);
     }
   };
 
