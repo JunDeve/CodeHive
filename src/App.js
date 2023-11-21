@@ -18,24 +18,29 @@ function App() {
   const [wikisearchResults, setWikisearchResults] = useState([]);
   const [YoutubesearchResults, setYoutubeSearchRusults] = useState([]);
   const [interestedDataResults, setinterestedDataResults] = useState([]);
-  const [DayDate, setDayDate] = useState([]);
   const [keyword, setKeyword] = useState('');
+  const [chatGPTResponse, setChatGPTResponse] = useState('');
 
-  const apiKey = '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';
-  const endpoint = 'https://api.openai.com/v1/chat/completions';
+  const handleSearchButtonClick = async () => {
+    try {
+      await fetchChatGPTData(keyword);
+    } catch (error) {
+      console.error('ChatGPT 검색 중 에러:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         await fetchSearchData(keyword);
-        await fetchDayTrendData();
-        await fetchYesterDayTrendData();
+        // await fetchDayTrendData();
+        // await fetchYesterDayTrendData();
         // await fetchRelatedQueries(keyword);
         // await fetchRelatedTopics(keyword);
-        await fetchinterestedTime(keyword);
+        // await fetchinterestedTime(keyword);
         // await fetchWikisearchData(keyword);
-        await fetchYoutubeSearchData(keyword);
-        // await fetchChatGPTData(keyword);
+        // await fetchYoutubeSearchData(keyword);
+        await fetchChatGPTData(keyword);
       } catch (error) {
         console.error('에러 발생:', error);
       }
@@ -115,13 +120,17 @@ function App() {
   };
 
   const fetchChatGPTData = async (query) => {
+    const apiKey = process.env.REACT_APP_OPENAI_SECRET_KEY;
+    console.log('전송된 API 키:', apiKey);
+    const endpoint = 'https://api.openai.com/v1/chat/completions';
+
     try {
       const response = await axios.post(
         endpoint,
         {
           model: 'gpt-3.5-turbo',
           messages: [
-            { role: 'system', content: 'You are a helpful assistant.' },
+            { role: 'system', content: '도움!' },
             { role: 'user', content: query },
           ],
         },
@@ -134,8 +143,7 @@ function App() {
       );
 
       const chatGPTData = response.data.choices[0].message.content;
-      console.log('OpenAI 채팅 결과:', chatGPTData);
-      // 이후 chatGPTData를 활용한 작업을 진행할 수 있습니다.
+      setChatGPTResponse(chatGPTData);
     } catch (error) {
       console.error('OpenAI 채팅 요청 중 에러:', error);
     }
@@ -172,37 +180,15 @@ function App() {
     }
   };
 
-  // const fetchinterestedTime = async (newKeyword) => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:5000/interestedTime?keyword=${newKeyword}`);
-  //     const interestedData = response.data;
-  //     console.log('백엔드에서 받은 관심도 변화:', interestedData);
-
-  //     setinterestedDataResults(interestedData.default.timelineData);
-  //   } catch (error) {
-  //     console.error('요청 중 오류 발생:', error);
-  //   }
-  // };
-
-  //관심도 변화
   const fetchinterestedTime = async (newKeyword) => {
     try {
       const response = await axios.get(`http://localhost:5000/interestedTime?keyword=${newKeyword}`);
       const interestedData = response.data;
-      const list = []
-      const list2 = []
-      for (let i = 0; i < interestedData.default.timelineData.length; i++) {
-        list.push(interestedData.default.timelineData[i].value[0]);
-        const formattedTime = interestedData.default.timelineData[i].formattedTime;
-        const monthDay = formattedTime.slice(5 , 12);
-        list2.push(monthDay);
-      }
-      console.log("list : ", list);
-      console.log("list2 : ", list2);
-      setDayDate(list2);
-      setinterestedDataResults(list);
+      console.log('백엔드에서 받은 관심도 변화:', interestedData);
+
+      setinterestedDataResults(interestedData.default.timelineData);
     } catch (error) {
-      console.error("요청 중 오류 발생:", error);
+      console.error('요청 중 오류 발생:', error);
     }
   };
 
@@ -224,9 +210,15 @@ function App() {
           <input
             type="button"
             value="자전거"
-            onClick={() => setKeyword('자전거')}
+            onClick={() => {
+              setKeyword('자전거');
+              handleSearchButtonClick();
+            }}
           />
           <br />
+          <p>ChatGPT 응답: {chatGPTResponse}</p>
+          <br />
+          <hr />
           <p>일별 인기 급상승 검색어(오늘)</p>
           <hr />
           <ul>
