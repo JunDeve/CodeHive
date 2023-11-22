@@ -60,52 +60,40 @@ app.get("/yesterdaytrending", (req, res) => {
   });
 });
 
-// // 관련 검색어
-// app.get("/relatedQueries", (req, res) => {
-//   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
-//   googleTrends.apiKey = apiKey;
+// 관련 주제
+app.get("/relatedTopics", (req, res) => {
+  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+  googleTrends.apiKey = apiKey;
 
-//   const keyword = req.query.keyword;
+  const keyword = req.query.keyword;
 
-//   googleTrends.relatedQueries({
-//     keyword: keyword,
-//     geo: 'KR',
-//     hl: 'KR',
-//   }, function (err, results) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       const parsedResults = JSON.parse(results);
-//       topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
-//       console.log("관련 검색어 : ", topRankedKeywords);
-//       res.json(topRankedKeywords);
-//     }
-//   }
-// )});
+  googleTrends.relatedTopics({
+    keyword: keyword,
+    startTime: new Date('2010-01-01'),
+    // 2010년 이전자료에는 이상한 토픽이 엄청 많음
+    hl: 'ko',
+  }, function (err, results) {
+    if (err) {
+      console.log(err);
+    } else {
+      relatedTopicsRu = JSON.parse(results);
+      TopRankedTopics = relatedTopicsRu.default.rankedList[0].rankedKeyword.slice(0, 5);
+      console.log("관련 주제 : ", TopRankedTopics);
+      res.json(TopRankedTopics);
+    }
+  });
+});
 
-// // 관련 주제
-// app.get("/relatedTopics", (req, res) => {
-//   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
-//   googleTrends.apiKey = apiKey;
-
-//   const keyword = req.query.keyword;
-
-//   googleTrends.relatedTopics({
-//     keyword: keyword,
-//     startTime: new Date('2010-01-01'),
-//     // 2010년 이전자료에는 이상한 토픽이 엄청 많음
-//     hl: 'ko',
-//   }, function (err, results) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       relatedTopicsRu = JSON.parse(results);
-//       TopRankedTopics = relatedTopicsRu.default.rankedList[0].rankedKeyword.slice(0, 5);
-//       console.log("관련 주제 : ", TopRankedTopics);
-//       res.json(TopRankedTopics);
-//     }
-//   });
-// });
+app.get("/relatedTopics", async (req, res) => {
+  try {
+    const response = await axios.get(`https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/relatedTopics`);
+    const relatedTopicsData = response.data;
+    const relatedTopics_1 = relatedTopicsData;
+    res.json(relatedTopics_1);
+  } catch (error) {
+    console.error('오류 발생:', error);
+  }
+});
 
 // 검색 기능
 app.get("/search", async (req, res) => {

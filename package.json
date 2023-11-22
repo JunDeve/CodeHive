@@ -50,5 +50,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net"
 }
