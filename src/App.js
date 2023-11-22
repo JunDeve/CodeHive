@@ -23,7 +23,7 @@ function App() {
 
   const handleSearchButtonClick = async () => {
     try {
-      await fetchChatGPTData(keyword);
+      // await fetchChatGPTData(keyword);
     } catch (error) {
       console.error('ChatGPT 검색 중 에러:', error);
     }
@@ -32,15 +32,15 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetchSearchData(keyword);
+        // await fetchSearchData(keyword);
         // await fetchDayTrendData();
         // await fetchYesterDayTrendData();
-        // await fetchRelatedQueries(keyword);
-        // await fetchRelatedTopics(keyword);
+        await fetchRelatedQueries(keyword);
+        await fetchRelatedTopics(keyword);
         // await fetchinterestedTime(keyword);
         // await fetchWikisearchData(keyword);
         // await fetchYoutubeSearchData(keyword);
-        await fetchChatGPTData(keyword);
+        // await fetchChatGPTData(keyword);
       } catch (error) {
         console.error('에러 발생:', error);
       }
@@ -94,11 +94,9 @@ function App() {
 
   const fetchRelatedQueries = async (newKeyword) => {
     try {
-      const response = await axios.get(
-        `https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/relatedQueries?keyword=${newKeyword}`,
-        { withCredentials: true, headers: { 'Access-Control-Allow-Origin': '*' } }
-      );
-
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+      const targetUrl = `https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/function-1/relatedQueries?keyword=${newKeyword}`;
+      const response = await axios.get(proxyUrl + targetUrl);
       const relatedQueriesData = response.data;
       console.log('백엔드에서 받은 관련 검색어:', relatedQueriesData);
       setRelatedQueries(relatedQueriesData);
@@ -106,10 +104,13 @@ function App() {
       console.error('요청 중 오류 발생:', error);
     }
   };
+  
 
   const fetchRelatedTopics = async (newKeyword) => {
     try {
-      const response = await axios.get(`https://us-central1-powerful-anchor-405101.cloudfunctions.net/relatedTopics?keyword=${newKeyword}`);
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+      const targetUrl = `https://asia-northeast3-powerful-anchor-405101.cloudfunctions.net/function-2/relatedTopics?keyword=${newKeyword}`;
+      const response = await axios.get(proxyUrl + targetUrl);
       const relatedTopicsData = response.data;
       console.log('백엔드에서 받은 관련 주제:', relatedTopicsData);
       const relatedTopics_1 = relatedTopicsData;
