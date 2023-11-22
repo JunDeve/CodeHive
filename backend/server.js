@@ -60,96 +60,96 @@ app.get("/yesterdaytrending", (req, res) => {
   });
 });
 
-// 관련 검색어
-app.get("/relatedQueries", (req, res) => {
-  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
-  googleTrends.apiKey = apiKey;
+// // 관련 검색어
+// app.get("/relatedQueries", (req, res) => {
+//   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+//   googleTrends.apiKey = apiKey;
 
-  const keyword = req.query.keyword;
+//   const keyword = req.query.keyword;
 
-  googleTrends.relatedQueries({
-    keyword: keyword,
-    geo: 'KR',
-    hl: 'KR',
-  }, function (err, results) {
-    if (err) {
-      console.log(err);
-    } else {
-      const parsedResults = JSON.parse(results);
-      topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
-      console.log("관련 검색어 : ", topRankedKeywords);
-      res.json(topRankedKeywords);
-    }
-  }
-)});
+//   googleTrends.relatedQueries({
+//     keyword: keyword,
+//     geo: 'KR',
+//     hl: 'KR',
+//   }, function (err, results) {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       const parsedResults = JSON.parse(results);
+//       topRankedKeywords = parsedResults.default.rankedList[0].rankedKeyword.slice(0, 5);
+//       console.log("관련 검색어 : ", topRankedKeywords);
+//       res.json(topRankedKeywords);
+//     }
+//   }
+// )});
 
-// 관련 주제
-app.get("/relatedTopics", (req, res) => {
-  const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
-  googleTrends.apiKey = apiKey;
+// // 관련 주제
+// app.get("/relatedTopics", (req, res) => {
+//   const apiKey = "AIzaSyDlCtE421Jns3qDxRM5U6kLrRwvxNIXL7U";
+//   googleTrends.apiKey = apiKey;
 
-  const keyword = req.query.keyword;
+//   const keyword = req.query.keyword;
 
-  googleTrends.relatedTopics({
-    keyword: keyword,
-    startTime: new Date('2010-01-01'),
-    hl: 'ko',
-  }, function (err, results) {
-    if (err) {
-      console.log(err);
-    } else {
-      relatedTopicsRu = JSON.parse(results);
-      TopRankedTopics = relatedTopicsRu.default.rankedList[0].rankedKeyword.slice(0, 5);
-      console.log("관련 주제 : ", TopRankedTopics);
-      res.json(TopRankedTopics);
-    }
-  });
-});
+//   googleTrends.relatedTopics({
+//     keyword: keyword,
+//     startTime: new Date('2010-01-01'),
+//     // 2010년 이전자료에는 이상한 토픽이 엄청 많음
+//     hl: 'ko',
+//   }, function (err, results) {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       relatedTopicsRu = JSON.parse(results);
+//       TopRankedTopics = relatedTopicsRu.default.rankedList[0].rankedKeyword.slice(0, 5);
+//       console.log("관련 주제 : ", TopRankedTopics);
+//       res.json(TopRankedTopics);
+//     }
+//   });
+// });
 
 // 검색 기능
 app.get("/search", async (req, res) => {
-  const KEY = '069d85c726af4bcb8f5ab1bc9fc539aaa86f54e11441f36735f044f87d9f6e53';
-  const keyword = req.query.q;
-  const options = {
-    qs: {
-      q: keyword,
-      engine: "google",
-      location: "South Korea",
-      gl: "kr",
-      hl: "ko",
-      google_domain: "google.co.kr",
-      num: 10,
-      start: 0,
-      safe: "active",
-    },
-  };
+  const apiKey = "AIzaSyA-ja8wyNG9BXHh0xqik39yWeLybm23tGA";
+  const searchEngineId = "b6cc251a7b2a1452a";
+  const searchQuery = req.query.q || "default_query";
 
   try {
-    const searchResults = await serp.search(options);
+    const response = await axios.get(
+      `https://www.googleapis.com/customsearch/v1?q=${searchQuery}&cx=${searchEngineId}&searchType=image&key=${apiKey}`
+    );
 
-    res.json(searchResults);
+    const images = response.data.items.map((item) => ({
+      url: item.link,
+      snippet: item.snippet,
+      thumbnail: item.image.thumbnailLink,
+      context: item.image.contextLink,
+    }));
+
+    res.json(images);
   } catch (error) {
-    console.error("검색 요청 중 에러 : ", error);
+    console.error("이미지 검색 에러:", error.message);
   }
 });
 
-// 위키 검색 기능
-app.get("/wikisearch", async (req, res) => {
-  const keyword = req.query.q;
-  try {
-    await wiki.setLang('ko');
+// // 위키 검색 기능
+// app.get("/wikisearch", async (req, res) => {
+//   const keyword = req.query.q;
+//   try {
+//     await wiki.setLang('ko');
 
-    const page = await wiki.page(keyword);
-    console.log("위키 검색 결과", page);
+//     const page = await wiki.page(keyword);
+//     console.log("위키 검색 결과", page);
 
-    const summary = await page.summary();
-    console.log("검색 결과 요약 : ", summary);
+//     const summary = await page.summary();
+//     console.log("검색 결과 요약 : ", summary);
 
-    res.json(summary);
-  } catch (error) {
-    console.error("검색 요청 중 에러 : ", error);
-  }
-});
+//     res.json(summary);
+//   } catch (error) {
+//     console.error("검색 요청 중 에러 : ", error);
+//   }
+// });
+
+
 
 // 유튜브 검색 기능
 app.get("/youtubeSearch", async (req, res) => {
