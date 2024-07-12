@@ -1,4 +1,4 @@
-Search service for people with disabilities
+Search service created for people with disabilities
 
 2023/12/06 To be revised after final results.
 
